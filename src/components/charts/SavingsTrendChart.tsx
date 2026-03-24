@@ -26,23 +26,26 @@ export function SavingsTrendChart({ data }: SavingsTrendChartProps) {
                 <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" className="opacity-50" />
+            <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
             <XAxis 
               dataKey="month" 
-              tick={{ fontSize: 12 }}
-              stroke="#94a3b8"
+              tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
+              stroke="hsl(var(--muted-foreground))"
             />
             <YAxis 
-              tick={{ fontSize: 12 }}
-              stroke="#94a3b8"
+              tick={{ fontSize: 12, fill: "hsl(var(--foreground))" }}
+              stroke="hsl(var(--muted-foreground))"
             />
             <Tooltip 
               formatter={(value: number) => `₱${value.toFixed(2)}`}
               contentStyle={{ 
                 borderRadius: "8px", 
-                border: "1px solid #e2e8f0",
-                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
+                border: "1px solid hsl(var(--border))",
+                backgroundColor: "hsl(var(--card))",
+                color: "hsl(var(--foreground))"
               }}
+              itemStyle={{ color: "hsl(var(--foreground))" }}
+              labelStyle={{ color: "hsl(var(--foreground))" }}
             />
             <Area 
               type="monotone" 

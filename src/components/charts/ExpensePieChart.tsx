@@ -14,7 +14,7 @@ export function ExpensePieChart({ data }: { data: DataPoint[] }) {
   if (data.length === 0) {
     return (
       <Card className="h-full">
-        <div className="flex h-full items-center justify-center text-sm text-slate-500">
+        <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
           No expenses this month
         </div>
       </Card>
@@ -50,11 +50,16 @@ export function ExpensePieChart({ data }: { data: DataPoint[] }) {
               formatter={(value: number) => `₱${value.toFixed(2)}`}
               contentStyle={{ 
                 borderRadius: "8px", 
-                border: "1px solid #e2e8f0",
-                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
+                border: "1px solid hsl(var(--border))",
+                backgroundColor: "hsl(var(--card))",
+                color: "hsl(var(--foreground))"
               }}
+              itemStyle={{ color: "hsl(var(--foreground))" }}
+              labelStyle={{ color: "hsl(var(--foreground))" }}
             />
-            <Legend />
+            <Legend 
+              wrapperStyle={{ color: "hsl(var(--foreground))" }}
+            />
           </PieChart>
         </ResponsiveContainer>
       </div>
