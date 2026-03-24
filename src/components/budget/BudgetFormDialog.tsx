@@ -26,22 +26,15 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { monthKey } from '@/lib/utils';
+import { categoryList } from '@/lib/categories';
 
 const budgetFormSchema = z.object({
-  category: z.string().min(1),
-  month: z.string().regex(/^\\d{4}-(0[1-9]|1[0-2])$/),
-  amount: z.coerce.number().positive('Amount must be positive').min(1),
+  category: z.string().min(1, "Category is required"),
+  month: z.string().min(1, "Month is required"),
+  amount: z.coerce.number().positive("Amount must be positive").min(0.01),
 });
 
 type BudgetFormValues = z.infer<typeof budgetFormSchema>;
-
-const predefinedCategories = [
-  'Food',
-  'Transport',
-  'Salary',
-  'Entertainment',
-  'Utilities',
-];
 
 export function BudgetFormDialog() {
   const [open, setOpen] = useState(false);
@@ -70,14 +63,19 @@ export function BudgetFormDialog() {
     const formData = new FormData();
     formData.append('category', data.category);
     formData.append('month', data.month);
-    formData.append('amount', data.amount.toString());
+    formData.append('amount', String(data.amount));
     try {
       await upsertBudget(formData);
-      toast.success('Budget updated');
+      toast.success('Budget saved');
       reset();
       setOpen(false);
     } catch (error) {
-      toast.error('Failed to save budget');
+      console.error("Budget error:", error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error('Failed to save budget');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -104,7 +102,7 @@ export function BudgetFormDialog() {
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {predefinedCategories.map((category) => (
+                  {categoryList.map((category) => (
                     <SelectItem key={category} value={category}>
                       {category}
                     </SelectItem>

@@ -6,11 +6,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { formatCurrency, monthKey } from "@/lib/utils";
 import { ExpensePieChart } from "@/components/charts/ExpensePieChart";
 import { IncomeExpenseBar } from "@/components/charts/IncomeExpenseBar";
+import { SavingsTrendChart } from "@/components/charts/SavingsTrendChart";
 import { BudgetProgressList } from "@/components/budget/BudgetProgressList";
-import { TransactionTable } from "@/components/transaction/TransactionTable";
-import { TransactionFormDialog } from "@/components/transaction/TransactionFormDialog";
+import { TransactionSection } from "@/components/transaction/TransactionSection";
 import { BudgetFormDialog } from "@/components/budget/BudgetFormDialog";
+import { SavingsGoalCard } from "@/components/savings/SavingsGoalCard";
+import { SavingsGoalFormDialog } from "@/components/savings/SavingsGoalFormDialog";
 import { SignOutButton } from "@/components/auth/SignOutButton";
+import { AIChat } from "@/components/ai/AIChat";
+import { TrendingUp, TrendingDown, PiggyBank, Target } from "lucide-react";
 
 export default async function DashboardPage() {
   let session;
@@ -29,7 +33,7 @@ export default async function DashboardPage() {
   const thisMonth = monthKey(now);
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  const [transactions, budgets] = await Promise.all([
+  const [transactions, budgets, savingsGoals] = await Promise.all([
     prisma.transaction.findMany({
       where: { userId },
       orderBy: { date: "desc" },
@@ -38,6 +42,10 @@ export default async function DashboardPage() {
     prisma.budget.findMany({
       where: { userId },
       orderBy: { category: "asc" },
+    }),
+    prisma.savingsGoal.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
     }),
   ]);
 
@@ -100,41 +108,82 @@ export default async function DashboardPage() {
     expense: expenseByMonth.get(month) ?? 0,
   }));
 
+  const savingsTrendData = months.map((month) => ({
+    month,
+    income: incomeByMonth.get(month) ?? 0,
+    expense: expenseByMonth.get(month) ?? 0,
+    savings: (incomeByMonth.get(month) ?? 0) - (expenseByMonth.get(month) ?? 0),
+  }));
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      <header className="border-b border-slate-200 bg-white/70 py-4 backdrop-blur dark:border-slate-800 dark:bg-slate-900/60">
+      <header className="border-b border-slate-200 bg-white/70 py-4 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/60">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
           <div>
-            <h1 className="text-2xl font-semibold">Dashboard</h1>
-            <p className="text-sm text-slate-600 dark:text-slate-300">
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-50">Dashboard</h1>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
               Track your budget, transactions & analytics.
             </p>
           </div>
           <div className="flex gap-2">
-            <TransactionFormDialog />
-            <BudgetFormDialog />
             <SignOutButton />
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-7xl px-4 py-10">
-        <div className="grid gap-6 lg:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>Balance</CardTitle>
-              <CardDescription>Income - Expenses (this month)</CardDescription>
+      <main className="mx-auto max-w-7xl px-4 py-8">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Card className="border-l-4 border-l-emerald-500">
+            <CardHeader className="pb-2 flex flex-row items-center justify-between">
+              <CardDescription>Total Income</CardDescription>
+              <TrendingUp className="h-4 w-4 text-emerald-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-semibold">{formatCurrency(balance)}</div>
-              <div className="mt-2 flex gap-4 text-sm">
-                <span className="text-green-600 dark:text-green-400">Income: {formatCurrency(incomeThisMonth)}</span>
-                <span className="text-red-600 dark:text-red-400">Expense: {formatCurrency(expenseThisMonth)}</span>
-              </div>
+              <div className="text-2xl font-bold text-emerald-600">{formatCurrency(incomeThisMonth)}</div>
+              <p className="text-xs text-slate-500">This month</p>
             </CardContent>
           </Card>
 
+          <Card className="border-l-4 border-l-rose-500">
+            <CardHeader className="pb-2 flex flex-row items-center justify-between">
+              <CardDescription>Total Expenses</CardDescription>
+              <TrendingDown className="h-4 w-4 text-rose-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-rose-600">{formatCurrency(expenseThisMonth)}</div>
+              <p className="text-xs text-slate-500">This month</p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-indigo-500">
+            <CardHeader className="pb-2 flex flex-row items-center justify-between">
+              <CardDescription>Net Balance</CardDescription>
+              <PiggyBank className="h-4 w-4 text-indigo-500" />
+            </CardHeader>
+            <CardContent>
+              <div className={`text-2xl font-bold ${balance >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
+                {formatCurrency(balance)}
+              </div>
+              <p className="text-xs text-slate-500">This month</p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-amber-500">
+            <CardHeader className="pb-2 flex flex-row items-center justify-between">
+              <CardDescription>Savings Rate</CardDescription>
+              <Target className="h-4 w-4 text-amber-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-amber-600">
+                {incomeThisMonth > 0 ? ((balance / incomeThisMonth) * 100).toFixed(1) : 0}%
+              </div>
+              <p className="text-xs text-slate-500">Of income saved</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-3 mt-6">
           <Card className="lg:col-span-2">
-            <CardHeader>
+            <CardHeader className="pb-2">
               <CardTitle>Charts</CardTitle>
               <CardDescription>Expense breakdown and trends</CardDescription>
             </CardHeader>
@@ -143,30 +192,58 @@ export default async function DashboardPage() {
               <IncomeExpenseBar data={trendChartData} />
             </CardContent>
           </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle>Savings Trend</CardTitle>
+              <CardDescription>Monthly savings over time</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SavingsTrendChart data={savingsTrendData} />
+            </CardContent>
+          </Card>
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
           <Card>
-            <CardHeader>
-              <CardTitle>Budget Usage</CardTitle>
-              <CardDescription>Monthly budget progress</CardDescription>
+            <CardHeader className="pb-2 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Budget Usage</CardTitle>
+                <CardDescription>Monthly budget progress</CardDescription>
+              </div>
+              <BudgetFormDialog />
             </CardHeader>
             <CardContent>
               <BudgetProgressList budgets={budgets} expenses={totalsByCategory} month={thisMonth} />
             </CardContent>
           </Card>
 
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Recent Transactions</CardTitle>
-              <CardDescription>Latest activity</CardDescription>
+          <Card>
+            <CardHeader className="pb-2 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Savings Goals</CardTitle>
+                <CardDescription>Track your savings progress</CardDescription>
+              </div>
+              <SavingsGoalFormDialog />
             </CardHeader>
             <CardContent>
-              <TransactionTable transactions={transactions} />
+              {savingsGoals.length === 0 ? (
+                <p className="text-sm text-slate-500">No savings goals yet. Create one to start tracking!</p>
+              ) : (
+                <div className="space-y-3">
+                  {savingsGoals.map((goal) => (
+                    <SavingsGoalCard key={goal.id} goal={goal} />
+                  ))}
+                </div>
+              )}
             </CardContent>
+          </Card>
+
+          <Card className="lg:col-span-2">
+            <TransactionSection transactions={transactions} />
           </Card>
         </div>
       </main>
+      <AIChat />
     </div>
   );
 }

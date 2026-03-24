@@ -28,6 +28,14 @@ export function BudgetProgressList({
       {budgets.map((budget) => {
         const spent = expenses[budget.category] ?? 0;
         const percent = Math.min(100, (spent / budget.amount) * 100);
+        
+        const getVariant = () => {
+          if (percent >= 100) return "danger";
+          if (percent >= 80) return "warning";
+          return "success";
+        };
+
+        const variant = getVariant();
 
         return (
           <div key={budget.id} className="space-y-1">
@@ -39,10 +47,14 @@ export function BudgetProgressList({
             </div>
             <Progress
               value={percent}
-              className={percent >= 90 ? "bg-amber-400" : ""}
+              variant={variant}
             />
-            {percent >= 90 ? (
-              <p className="text-xs text-amber-600 dark:text-amber-300">
+            {percent >= 100 ? (
+              <p className="text-xs text-rose-600 dark:text-rose-400 font-medium">
+                Budget exceeded!
+              </p>
+            ) : percent >= 80 ? (
+              <p className="text-xs text-amber-600 dark:text-amber-400">
                 Approaching budget limit
               </p>
             ) : null}

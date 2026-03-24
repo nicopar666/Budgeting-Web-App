@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -16,13 +16,14 @@ model User {
   updatedAt DateTime      @updatedAt
   transactions Transaction[]
   budgets      Budget[]
+  savingsGoals SavingsGoal[]
 }
 
 model Transaction {
   id          String   @id @default(cuid())
   user        User     @relation(fields: [userId], references: [id])
   userId      String
-  type        TransactionType
+  type        String
   amount      Float
   description String?
   category    String
@@ -44,7 +45,15 @@ model Budget {
   @@unique([userId, category, month])
 }
 
-enum TransactionType {
-  income
-  expense
+model SavingsGoal {
+  id          String   @id @default(cuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  name        String
+  targetAmount Float
+  currentAmount Float @default(0)
+  deadline    DateTime?
+  completed   Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

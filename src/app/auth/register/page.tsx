@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,39 +30,51 @@ export default function RegisterPage() {
       body: JSON.stringify({ email, password, name }),
     });
 
-    setIsLoading(false);
-
     if (!res.ok) {
-      const result = await res.json();
-      toast.error(result?.error ?? "Failed to register");
+      setIsLoading(false);
+      let errorMsg = "Failed to register";
+      try {
+        const result = await res.json();
+        errorMsg = result?.error ?? errorMsg;
+      } catch {}
+      toast.error(errorMsg);
       return;
     }
 
-    await signIn("credentials", {
+    const signInResult = await signIn("credentials", {
       email,
       password,
-      redirectTo: "/dashboard",
+      redirect: false,
     });
 
-    toast.success("Registration successful!");
+    setIsLoading(false);
+
+    if (signInResult?.error) {
+      toast.success("Registration successful! Please sign in.");
+      router.push("/auth/login");
+      return;
+    }
+
+    toast.success("Logged in successfully!");
+    router.push("/dashboard");
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Create an Account</CardTitle>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 px-4 py-12 dark:from-slate-900 dark:to-slate-950">
+      <Card className="w-full max-w-md shadow-xl">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-2xl font-bold">Create an Account</CardTitle>
           <CardDescription>Sign up to start budgeting.</CardDescription>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={onSubmit}>
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" name="name" required />
+              <Input id="name" name="name" placeholder="John Doe" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" required />
+              <Input id="email" name="email" type="email" placeholder="you@example.com" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
@@ -73,9 +85,9 @@ export default function RegisterPage() {
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex justify-between text-sm">
+        <CardFooter className="flex justify-center text-sm">
           <span>Already have an account?</span>
-          <Link href="/auth/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+          <Link href="/auth/login" className="ml-1 font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
             Sign in
           </Link>
         </CardFooter>

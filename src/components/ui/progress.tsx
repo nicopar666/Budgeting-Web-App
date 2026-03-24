@@ -1,12 +1,22 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
+type ProgressVariant = "default" | "success" | "warning" | "danger";
+
 export interface ProgressProps
   extends React.HTMLAttributes<HTMLDivElement> {
   value: number;
+  variant?: ProgressVariant;
 }
 
-export function Progress({ className, value, ...props }: ProgressProps) {
+const variantClasses: Record<ProgressVariant, string> = {
+  default: "bg-indigo-600 dark:bg-indigo-400",
+  success: "bg-emerald-500 dark:bg-emerald-400",
+  warning: "bg-amber-500 dark:bg-amber-400",
+  danger: "bg-rose-500 dark:bg-rose-400",
+};
+
+export function Progress({ className, value, variant = "default", ...props }: ProgressProps) {
   return (
     <div
       className={cn(
@@ -16,7 +26,7 @@ export function Progress({ className, value, ...props }: ProgressProps) {
       {...props}
     >
       <div
-        className="h-full bg-indigo-600 transition-all dark:bg-indigo-400"
+        className={cn("h-full transition-all", variantClasses[variant])}
         style={{ width: `${value}%` }}
       />
     </div>

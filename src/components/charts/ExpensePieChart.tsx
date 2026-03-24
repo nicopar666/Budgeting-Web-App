@@ -31,13 +31,29 @@ export function ExpensePieChart({ data }: { data: DataPoint[] }) {
               dataKey="value"
               nameKey="category"
               outerRadius={90}
-              label={(entry) => entry.category}
+              label={({ category, percent }) => `${category} ${(percent * 100).toFixed(0)}%`}
+              labelLine={true}
+              animationBegin={0}
+              animationDuration={800}
+              animationEasing="ease-out"
             >
               {data.map((entry, index) => (
-                <Cell key={entry.category} fill={COLORS[index % COLORS.length]} />
+                <Cell 
+                  key={entry.category} 
+                  fill={COLORS[index % COLORS.length]} 
+                  stroke="transparent"
+                  style={{ filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))" }}
+                />
               ))}
             </Pie>
-            <Tooltip formatter={(value: number) => value.toFixed(2)} />
+            <Tooltip 
+              formatter={(value: number) => `$${value.toFixed(2)}`}
+              contentStyle={{ 
+                borderRadius: "8px", 
+                border: "1px solid #e2e8f0",
+                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
+              }}
+            />
             <Legend />
           </PieChart>
         </ResponsiveContainer>

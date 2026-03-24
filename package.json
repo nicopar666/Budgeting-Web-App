@@ -9,10 +9,8 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "dependencies": {
-"@auth/core":"^0.34.3",
-"@auth/nextjs":"0.0.0-380f8d56",
-"@auth/prisma-adapter":"^2.11.1",
+"dependencies": {
+    "next-auth":"^4.24.10",
     "@hookform/resolvers": "^3.0.0",
     "@prisma/client": "^5.22.0",
     "@radix-ui/react-dialog": "^1.0.0",

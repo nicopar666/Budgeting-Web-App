@@ -1,50 +1,38 @@
-import { NextAuth } from "@auth/nextjs";
-import type { NextAuthConfig } from "@auth/nextjs";
-import Credentials from "@auth/core/providers/credentials";
+import type { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "./prisma";
 import bcrypt from "bcryptjs";
-import { cookies } from "next/headers";
 
-const credentialsProvider: any = Credentials({
-  name: "Credentials",
-  credentials: {
-    email: { label: "Email", type: "email" },
-    password: { label: "Password", type: "password" },
-  },
-  async authorize(credentials: any, request?: Request) {
-    console.log("Auth authorize called:", (credentials as any).email);
-    try {
-      if (!credentials?.email || !credentials?.password) {
-        console.log("Missing credentials");
-        return null;
-      }
+export const authOptions: NextAuthOptions = {
+  providers: [
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials: any) {
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
 
-      const user = await prisma.user.findUnique({
-        where: { email: credentials.email.toLowerCase().trim() },
-      });
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email.toLowerCase().trim() },
+        });
 
-      if (!user) {
-        console.log("User not found");
-        return null;
-      }
+        if (!user) {
+          return null;
+        }
 
-      const isValid = await bcrypt.compare(credentials.password, user.password);
-      if (!isValid) {
-        console.log("Invalid password");
-        return null;
-      }
+        const isValid = await bcrypt.compare(credentials.password, user.password);
+        if (!isValid) {
+          return null;
+        }
 
-      console.log("Auth success:", user.email);
-      return { id: user.id, email: user.email, name: user.name };
-    } catch (error) {
-      console.error("Auth error:", error);
-      return null;
-    }
-  },
-});
-
-export const authOptions: NextAuthConfig = {
-  providers: [credentialsProvider],
+        return { id: user.id, email: user.email, name: user.name };
+      },
+    }),
+  ],
   session: {
     strategy: "jwt",
   },
@@ -52,41 +40,30 @@ export const authOptions: NextAuthConfig = {
     signIn: "/auth/login",
   },
   callbacks: {
-    authorized: async () => true,
-    async jwt({ token, user }) {
-      if (user) token.user = user;
+    async jwt({ token, user }: any) {
+      if (user) {
+        token.id = user.id;
+      }
       return token;
     },
-    async session({ session, token }) {
-      if (token.user) session.user = token.user as any;
+    async session({ session, token }: any) {
+      if (session.user) {
+        session.user.id = token.id;
+      }
       return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-const { auth } = NextAuth(authOptions);
-
-async function buildCookieHeader() {
-  const cookieStore = await cookies();
-  const cookieItems = cookieStore.getAll().map((c) => `${c.name}=${c.value}`);
-  return cookieItems.join("; ");
-}
+import { getServerSession } from "next-auth";
 
 export async function getAuthSession() {
-  const headers = new Headers();
-  const cookieHeader = await buildCookieHeader();
-  if (cookieHeader) headers.set("cookie", cookieHeader);
-  return auth(headers);
-}
-
-export async function getCurrentUser() {
-  const session = await getAuthSession();
-  return session?.user;
+  return getServerSession(authOptions);
 }
 
 export async function requireAuth() {
-  const session = await getAuthSession();
+  const session = await getServerSession(authOptions);
   if (!session?.user) {
     throw new Error("Unauthorized");
   }

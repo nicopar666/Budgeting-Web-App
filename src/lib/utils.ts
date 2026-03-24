@@ -5,12 +5,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const CURRENCY = process.env.CURRENCY ?? "PHP";
-
 export function formatCurrency(value: number) {
-  return new Intl.NumberFormat(undefined, {
+  return new Intl.NumberFormat("en-PH", {
     style: "currency",
-    currency: CURRENCY,
+    currency: "PHP",
   }).format(value);
 }
 

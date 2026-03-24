@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -21,37 +22,35 @@ export default function LoginPage() {
     const email = String(data.get("email") ?? "").trim();
     const password = String(data.get("password") ?? "");
 
-    const res = await fetch('/api/auth/signin/credentials', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({ email, password, callbackUrl: '/dashboard' }),
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
     });
 
     setIsLoading(false);
 
-    if (!res.ok) {
-      toast.error('Invalid credentials');
+    if (result?.error) {
+      toast.error("Invalid credentials");
       return;
     }
 
-    toast.success('Logged in successfully!');
-    window.location.href = '/dashboard';
+    toast.success("Logged in successfully!");
+    window.location.href = "/dashboard";
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Sign In</CardTitle>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 px-4 py-12 dark:from-slate-900 dark:to-slate-950">
+      <Card className="w-full max-w-md shadow-xl">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
           <CardDescription>Welcome back. Enter your credentials.</CardDescription>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={onSubmit}>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" required />
+              <Input id="email" name="email" type="email" placeholder="you@example.com" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
@@ -62,9 +61,9 @@ export default function LoginPage() {
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex justify-between text-sm">
+        <CardFooter className="flex justify-center text-sm">
           <span>Don't have an account?</span>
-          <Link href="/auth/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+          <Link href="/auth/register" className="ml-1 font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
             Create one
           </Link>
         </CardFooter>
