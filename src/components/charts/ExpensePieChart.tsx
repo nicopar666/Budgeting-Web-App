@@ -47,7 +47,7 @@ export function ExpensePieChart({ data }: { data: DataPoint[] }) {
               ))}
             </Pie>
             <Tooltip 
-              formatter={(value: number) => `$${value.toFixed(2)}`}
+              formatter={(value: number) => `₱${value.toFixed(2)}`}
               contentStyle={{ 
                 borderRadius: "8px", 
                 border: "1px solid #e2e8f0",

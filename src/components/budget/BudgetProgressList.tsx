@@ -13,11 +13,9 @@ interface Budget {
 export function BudgetProgressList({
   budgets,
   expenses,
-  month,
 }: {
   budgets: Budget[];
   expenses: Record<string, number>;
-  month: string;
 }) {
   if (budgets.length === 0) {
     return <p className="text-sm text-slate-500">No budgets set yet.</p>;

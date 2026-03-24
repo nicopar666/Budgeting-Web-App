@@ -2,13 +2,12 @@
 
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { formatCurrency, formatDate } from "@/lib/utils";
 
 interface Transaction {
   id: string;
   type: string;
   amount: number;
-  description: string | null;
+  description?: string | null;
   category: string;
   date: string | Date;
 }

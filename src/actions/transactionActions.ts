@@ -8,17 +8,28 @@ import { revalidatePath } from "next/cache";
 const transactionSchema = z.object({
   id: z.string().optional(),
   type: z.enum(["income", "expense"]),
-  amount: z.coerce.number().positive(),
-  description: z.string().max(250).optional(),
-  category: z.string().min(1).max(50),
+  amount: z.coerce.number().positive().max(999999999),
+  description: z.string().max(250).trim().optional(),
+  category: z.string().min(1).max(50).trim(),
   date: z.string().optional(),
-});
+}).strict();
 
 export type TransactionFormValues = z.infer<typeof transactionSchema>;
 
 export async function createTransaction(formData: FormData) {
   const user = await requireAuth();
-  const values = transactionSchema.parse(Object.fromEntries(formData.entries()));
+  
+  // Sanitize inputs before validation
+  const rawData: Record<string, FormDataEntryValue> = {};
+  for (const [key, value] of formData.entries()) {
+    if (typeof value === "string") {
+      rawData[key] = value.trim();
+    } else {
+      rawData[key] = value;
+    }
+  }
+  
+  const values = transactionSchema.parse(rawData);
 
   const transactionDate = values.date ? new Date(values.date) : new Date();
 

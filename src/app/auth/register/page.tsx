@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { Wallet, Loader2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
 export default function RegisterPage() {
@@ -36,7 +38,9 @@ export default function RegisterPage() {
       try {
         const result = await res.json();
         errorMsg = result?.error ?? errorMsg;
-      } catch {}
+      } catch {
+        // Ignore JSON parse errors
+      }
       toast.error(errorMsg);
       return;
     }
@@ -55,39 +59,77 @@ export default function RegisterPage() {
       return;
     }
 
-    toast.success("Logged in successfully!");
+    toast.success("Welcome to BudgetPro!");
     router.push("/dashboard");
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 px-4 py-12 dark:from-slate-900 dark:to-slate-950">
-      <Card className="w-full max-w-md shadow-xl">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">Create an Account</CardTitle>
-          <CardDescription>Sign up to start budgeting.</CardDescription>
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background" />
+      <div className="absolute inset-0 bg-[url('/grid.svg')] [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+      
+      <Card className="w-full max-w-md relative z-10 glass gradient-border animate-fade-in">
+        <CardHeader className="space-y-1 text-center pb-2">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+            <Wallet className="h-6 w-6 text-primary" />
+          </div>
+          <CardTitle className="text-2xl font-semibold tracking-tight">Create an account</CardTitle>
+          <p className="text-sm text-muted-foreground">Start your financial journey with us</p>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           <form className="space-y-4" onSubmit={onSubmit}>
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" name="name" placeholder="John Doe" required />
+              <Label htmlFor="name" className="text-sm font-medium">Name</Label>
+              <Input 
+                id="name" 
+                name="name" 
+                placeholder="John Doe" 
+                required 
+                className="bg-secondary/50 border-border focus:border-primary focus:ring-primary"
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" placeholder="you@example.com" required />
+              <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+              <Input 
+                id="email" 
+                name="email" 
+                type="email" 
+                placeholder="you@example.com" 
+                required 
+                className="bg-secondary/50 border-border focus:border-primary focus:ring-primary"
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" name="password" type="password" required minLength={6} />
+              <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+              <Input 
+                id="password" 
+                name="password" 
+                type="password" 
+                required 
+                minLength={6}
+                placeholder="Min 6 characters"
+                className="bg-secondary/50 border-border focus:border-primary focus:ring-primary"
+              />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Creating…" : "Create account"}
+            <Button 
+              type="submit" 
+              className="w-full bg-primary hover:bg-primary/90" 
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating account...
+                </>
+              ) : (
+                "Create account"
+              )}
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex justify-center text-sm">
-          <span>Already have an account?</span>
-          <Link href="/auth/login" className="ml-1 font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
+        <CardFooter className="justify-center text-sm">
+          <span className="text-muted-foreground">Already have an account?</span>
+          <Link href="/auth/login" className="ml-1 font-medium text-primary hover:text-primary/80 transition-colors">
             Sign in
           </Link>
         </CardFooter>
@@ -95,4 +137,3 @@ export default function RegisterPage() {
     </div>
   );
 }
-

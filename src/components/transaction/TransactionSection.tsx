@@ -9,7 +9,7 @@ import { TransactionFormDialog } from "./TransactionFormDialog";
 
 interface Transaction {
   id: string;
-  type: "income" | "expense";
+  type: string;
   amount: number;
   description?: string | null;
   category: string;

@@ -14,7 +14,7 @@ import { SavingsGoalCard } from "@/components/savings/SavingsGoalCard";
 import { SavingsGoalFormDialog } from "@/components/savings/SavingsGoalFormDialog";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { AIChat } from "@/components/ai/AIChat";
-import { TrendingUp, TrendingDown, PiggyBank, Target } from "lucide-react";
+import { TrendingUp, TrendingDown, PiggyBank, Target, Wallet } from "lucide-react";
 
 export default async function DashboardPage() {
   let session;
@@ -116,85 +116,88 @@ export default async function DashboardPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      <header className="border-b border-slate-200 bg-white/70 py-4 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/60">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
-          <div>
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-50">Dashboard</h1>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              Track your budget, transactions & analytics.
-            </p>
+    <div className="min-h-screen">
+      <header className="sticky top-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+              <Wallet className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-lg font-semibold tracking-tight">BudgetPro</h1>
+              <p className="text-xs text-muted-foreground">Financial Dashboard</p>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <SignOutButton />
-          </div>
+          <SignOutButton />
         </div>
       </header>
-      <main className="mx-auto max-w-7xl px-4 py-8">
+      
+      <main className="mx-auto max-w-7xl px-4 py-6 space-y-6">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-l-4 border-l-emerald-500">
-            <CardHeader className="pb-2 flex flex-row items-center justify-between">
-              <CardDescription>Total Income</CardDescription>
+          <Card className="gradient-border animate-fade-in stagger-1">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardDescription className="font-medium">Total Income</CardDescription>
               <TrendingUp className="h-4 w-4 text-emerald-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-emerald-600">{formatCurrency(incomeThisMonth)}</div>
-              <p className="text-xs text-slate-500">This month</p>
+              <div className="text-2xl font-bold text-emerald-500">{formatCurrency(incomeThisMonth)}</div>
+              <p className="text-xs text-muted-foreground mt-1">{thisMonth}</p>
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-rose-500">
-            <CardHeader className="pb-2 flex flex-row items-center justify-between">
-              <CardDescription>Total Expenses</CardDescription>
+          <Card className="gradient-border animate-fade-in stagger-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardDescription className="font-medium">Total Expenses</CardDescription>
               <TrendingDown className="h-4 w-4 text-rose-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-rose-600">{formatCurrency(expenseThisMonth)}</div>
-              <p className="text-xs text-slate-500">This month</p>
+              <div className="text-2xl font-bold text-rose-500">{formatCurrency(expenseThisMonth)}</div>
+              <p className="text-xs text-muted-foreground mt-1">{thisMonth}</p>
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-indigo-500">
-            <CardHeader className="pb-2 flex flex-row items-center justify-between">
-              <CardDescription>Net Balance</CardDescription>
-              <PiggyBank className="h-4 w-4 text-indigo-500" />
+          <Card className="gradient-border animate-fade-in stagger-3">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardDescription className="font-medium">Net Balance</CardDescription>
+              <PiggyBank className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className={`text-2xl font-bold ${balance >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
+              <div className={`text-2xl font-bold ${balance >= 0 ? "text-primary" : "text-rose-500"}`}>
                 {formatCurrency(balance)}
               </div>
-              <p className="text-xs text-slate-500">This month</p>
+              <p className="text-xs text-muted-foreground mt-1">{thisMonth}</p>
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-amber-500">
-            <CardHeader className="pb-2 flex flex-row items-center justify-between">
-              <CardDescription>Savings Rate</CardDescription>
+          <Card className="gradient-border animate-fade-in stagger-4">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardDescription className="font-medium">Savings Rate</CardDescription>
               <Target className="h-4 w-4 text-amber-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-amber-600">
+              <div className="text-2xl font-bold text-amber-500">
                 {incomeThisMonth > 0 ? ((balance / incomeThisMonth) * 100).toFixed(1) : 0}%
               </div>
-              <p className="text-xs text-slate-500">Of income saved</p>
+              <p className="text-xs text-muted-foreground mt-1">Of income saved</p>
             </CardContent>
           </Card>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3 mt-6">
-          <Card className="lg:col-span-2">
-            <CardHeader className="pb-2">
-              <CardTitle>Charts</CardTitle>
-              <CardDescription>Expense breakdown and trends</CardDescription>
+        <div className="grid gap-6 lg:grid-cols-3">
+          <Card className="lg:col-span-2 glass animate-fade-in stagger-5">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Financial Overview</CardTitle>
+              <CardDescription>Expense breakdown and income vs expense trends</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-6 lg:grid-cols-2">
               <ExpensePieChart data={chartData} />
               <IncomeExpenseBar data={trendChartData} />
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle>Savings Trend</CardTitle>
+          
+          <Card className="glass animate-fade-in stagger-6">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Savings Trend</CardTitle>
               <CardDescription>Monthly savings over time</CardDescription>
             </CardHeader>
             <CardContent>
@@ -203,31 +206,31 @@ export default async function DashboardPage() {
           </Card>
         </div>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-2">
-          <Card>
-            <CardHeader className="pb-2 flex flex-row items-center justify-between">
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Card className="glass animate-fade-in">
+            <CardHeader className="pb-3 flex flex-row items-center justify-between">
               <div>
-                <CardTitle>Budget Usage</CardTitle>
+                <CardTitle className="text-lg">Budget Usage</CardTitle>
                 <CardDescription>Monthly budget progress</CardDescription>
               </div>
               <BudgetFormDialog />
             </CardHeader>
             <CardContent>
-              <BudgetProgressList budgets={budgets} expenses={totalsByCategory} month={thisMonth} />
+              <BudgetProgressList budgets={budgets} expenses={totalsByCategory} />
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2 flex flex-row items-center justify-between">
+          <Card className="glass animate-fade-in">
+            <CardHeader className="pb-3 flex flex-row items-center justify-between">
               <div>
-                <CardTitle>Savings Goals</CardTitle>
-                <CardDescription>Track your savings progress</CardDescription>
+                <CardTitle className="text-lg">Savings Goals</CardTitle>
+                <CardDescription>Track your progress</CardDescription>
               </div>
               <SavingsGoalFormDialog />
             </CardHeader>
             <CardContent>
               {savingsGoals.length === 0 ? (
-                <p className="text-sm text-slate-500">No savings goals yet. Create one to start tracking!</p>
+                <p className="text-sm text-muted-foreground py-4">No savings goals yet. Create one to start tracking!</p>
               ) : (
                 <div className="space-y-3">
                   {savingsGoals.map((goal) => (
@@ -238,7 +241,7 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="lg:col-span-2">
+          <Card className="lg:col-span-2 glass animate-fade-in">
             <TransactionSection transactions={transactions} />
           </Card>
         </div>

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
 async function getCsrfToken() {
   const res = await fetch("/api/auth/csrf");
@@ -15,7 +16,8 @@ export function SignOutButton() {
 
   return (
     <Button
-      variant="secondary"
+      variant="ghost"
+      size="sm"
       onClick={async () => {
         const csrfToken = await getCsrfToken();
         const body = new URLSearchParams();
@@ -29,7 +31,9 @@ export function SignOutButton() {
 
         router.push("/auth/login");
       }}
+      className="text-muted-foreground hover:text-foreground"
     >
+      <LogOut className="h-4 w-4 mr-2" />
       Sign out
     </Button>
   );

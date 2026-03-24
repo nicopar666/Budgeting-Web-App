@@ -24,7 +24,7 @@ export function IncomeExpenseBar({
               stroke="#94a3b8"
             />
             <Tooltip 
-              formatter={(value: number) => `$${value.toFixed(2)}`}
+              formatter={(value: number) => `₱${value.toFixed(2)}`}
               contentStyle={{ 
                 borderRadius: "8px", 
                 border: "1px solid #e2e8f0",
