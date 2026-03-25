@@ -11,4 +11,4 @@ coverage
 /dist
 nul
 .vercel
-node_modules/.prisma
+.env*.local
