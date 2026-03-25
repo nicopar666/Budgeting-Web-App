@@ -9,3 +9,6 @@ ENVIRONMENT = "production"
 [build]
 command = "rm -f package-lock.json && npm install && npm run build"
 cache = false
+
+[build.watcher]
+exclude = ["tests/**", "docs/**", "**/*.test.ts", "**/*.spec.ts"]
