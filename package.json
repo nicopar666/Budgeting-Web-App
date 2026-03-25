@@ -10,7 +10,7 @@
     "lint": "next lint",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
-    "deploy": "npm run build && npx wrangler pages deploy .next"
+    "deploy": "npm run build && npx wrangler pages deploy .next --commit-dirty=true"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.0.0",
