@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "npx wrangler pages deploy .next --project-name=budgetpro"
+    "deploy": "npx wrangler pages deploy .next --project-name=Budgeting-Web-App"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.0.0",
