@@ -1,5 +1,5 @@
 {
   "name": "budgetpro",
-  "buildCommand": "npx prisma generate && npx next build",
+  "buildCommand": "npm run build",
   "outputDirectory": ".next"
 }
