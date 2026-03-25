@@ -33,7 +33,7 @@ A full-stack personal finance management application with budgeting, savings tra
 - **Spending Alerts** - Notifications when approaching budget limits
 - **Financial Report** - Detailed monthly reports
 
-### Data
+- ### Data
 - **Data Backup/Import** - AES-256-GCM encrypted exports, password-protected
 
 ### UI/UX
@@ -80,6 +80,10 @@ npm run dev
 | `npm run test` | Run tests |
 | `npm run lint` | ESLint check |
 | `npx prisma studio` | Database GUI |
+
+## Deployment (Dashboard)
+- Deploy via Cloudflare Pages dashboard (recommended). Set build command to "npm install && npm run build", output directory to ".next".
+- Wrangler-based deploys are no longer used (wrangler.toml removed).
 
 ## License
 
