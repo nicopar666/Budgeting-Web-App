@@ -5,3 +5,6 @@ pages_build_output_dir = ".next"
 
 [vars]
 ENVIRONMENT = "production"
+
+[build]
+command = "npm install && npm run build"
