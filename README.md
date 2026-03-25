@@ -1,6 +1,6 @@
 # BudgetPro - Personal Finance App
 
-**Live Demo**: https://budgetpro-r4r4mb1fm-skythelight15-4492s-projects.vercel.app/
+**Live Demo**: https://budgetpro-beta.vercel.app
 
 _Last Updated: March 26, 2026_
 
