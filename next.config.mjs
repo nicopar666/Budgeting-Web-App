@@ -1,3 +1,5 @@
+import { setupPlatform } from '@cloudflare/next-on-pages';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -6,4 +8,5 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+const withCloudflare = setupPlatform();
+export default withCloudflare(nextConfig);
