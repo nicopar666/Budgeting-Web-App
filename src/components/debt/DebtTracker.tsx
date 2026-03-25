@@ -46,7 +46,7 @@ export function DebtTracker({ debts: initialDebts }: DebtTrackerProps) {
       toast.success("Debt added");
       setOpen(false);
       window.location.reload();
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to add debt");
     }
   }
@@ -57,7 +57,7 @@ export function DebtTracker({ debts: initialDebts }: DebtTrackerProps) {
       await deleteDebt(id);
       setDebts(debts.filter(d => d.id !== id));
       toast.success("Debt deleted");
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to delete");
     }
   }
@@ -84,7 +84,7 @@ export function DebtTracker({ debts: initialDebts }: DebtTrackerProps) {
       }
       setPaymentOpen(false);
       window.location.reload();
-    } catch (error) {
+    } catch (_error) {
       toast.error("Payment failed");
     }
   }

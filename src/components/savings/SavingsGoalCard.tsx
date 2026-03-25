@@ -37,7 +37,7 @@ export function SavingsGoalCard({ goal }: { goal: SavingsGoal }) {
       toast.success(`Added ${formatCurrency(amount)} to ${goal.name}`);
       setAddAmount("");
       setShowAdd(false);
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to add to savings");
     }
   }
@@ -47,7 +47,7 @@ export function SavingsGoalCard({ goal }: { goal: SavingsGoal }) {
     try {
       await deleteSavingsGoal(goal.id);
       toast.success("Savings goal deleted");
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to delete");
     }
   }

@@ -43,7 +43,7 @@ export function BillReminderList({ reminders: initialReminders }: BillReminderLi
       toast.success("Bill reminder added");
       setOpen(false);
       window.location.reload();
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to add bill reminder");
     }
   }
@@ -54,7 +54,7 @@ export function BillReminderList({ reminders: initialReminders }: BillReminderLi
       await deleteBillReminder(id);
       setReminders(reminders.filter(r => r.id !== id));
       toast.success("Bill reminder deleted");
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to delete");
     }
   }
@@ -69,7 +69,7 @@ export function BillReminderList({ reminders: initialReminders }: BillReminderLi
         setReminders(reminders.map(r => r.id === id ? { ...r, isPaid: true } : r));
       }
       toast.success(isPaid ? "Marked as unpaid" : "Marked as paid");
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to update");
     }
   }

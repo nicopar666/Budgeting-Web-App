@@ -59,7 +59,7 @@ export function AssetList({ assets, userId = "" }: AssetListProps) {
       setName("");
       setValue("");
       setShowForm(false);
-    } catch (err) {
+    } catch (_err) {
       toast.error("Failed to add asset");
     }
     setLoading(false);
@@ -70,7 +70,7 @@ export function AssetList({ assets, userId = "" }: AssetListProps) {
     try {
       await deleteAsset(id);
       toast.success("Asset deleted");
-    } catch (err) {
+    } catch (_err) {
       toast.error("Failed to delete");
     }
   }
